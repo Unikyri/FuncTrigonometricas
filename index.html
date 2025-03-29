@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <title>Calculadora de Triángulo Rectángulo - Procedimiento</title>
+  <title>Calculadora de Triángulo Rectángulo - Explicación Paso a Paso</title>
   <style>
     body {
       font-family: sans-serif;
@@ -44,29 +44,12 @@
       padding: 2px;
       background: #fafafa;
     }
-    /* Posicionamiento de los inputs */
-    #input-y {
-      top: 140px;
-      left: -70px;
-    }
-    #input-x {
-      bottom: -40px;
-      left: 150px;
-    }
-    #input-h {
-      top: 80px;
-      left: 140px;
-    }
-    #input-B {
-      top: 10px;
-      left: 10px;
-      width: 45px;
-    }
-    #input-A {
-      bottom: -40px;
-      right: 10px;
-      width: 45px;
-    }
+    /* Posiciones de los inputs */
+    #input-y { top: 140px; left: -70px; }
+    #input-x { bottom: -40px; left: 150px; }
+    #input-h { top: 80px; left: 140px; }
+    #input-B { top: 10px; left: 10px; width: 45px; }
+    #input-A { bottom: -40px; right: 10px; width: 45px; }
     .btn-calcular {
       margin: 1rem;
       padding: 0.8rem 1.2rem;
@@ -77,9 +60,7 @@
       cursor: pointer;
       transition: background 0.3s;
     }
-    .btn-calcular:hover {
-      background: #303f9f;
-    }
+    .btn-calcular:hover { background: #303f9f; }
     .resultado, .procedimiento {
       max-width: 700px;
       background: #fff;
@@ -88,33 +69,14 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
       margin-bottom: 2rem;
     }
-    .resultado h3, .procedimiento h3 {
-      margin-top: 0;
-      text-align: center;
-    }
-    .error {
-      color: red;
-      text-align: center;
-      margin-top: 1rem;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin: 1rem 0;
-    }
-    table, th, td {
-      border: 1px solid #ccc;
-    }
-    th, td {
-      padding: 0.5rem;
-      text-align: center;
-    }
-    th {
-      background: #f0f0f0;
-    }
-    ul {
-      margin-left: 20px;
-    }
+    .resultado h3, .procedimiento h3 { margin-top: 0; text-align: center; }
+    .error { color: red; text-align: center; margin-top: 1rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+    table, th, td { border: 1px solid #ccc; }
+    th, td { padding: 0.5rem; text-align: center; }
+    th { background: #f0f0f0; }
+    ul { margin-left: 20px; }
+    li { margin-bottom: 8px; line-height: 1.4; }
   </style>
 </head>
 <body>
@@ -176,7 +138,6 @@
         </tr>
       </thead>
       <tbody>
-        <!-- Fila para ángulo A -->
         <tr>
           <th>Ángulo A</th>
           <td id="senA"></td>
@@ -186,7 +147,6 @@
           <td id="secA"></td>
           <td id="cotA"></td>
         </tr>
-        <!-- Fila para ángulo B -->
         <tr>
           <th>Ángulo B</th>
           <td id="senB"></td>
@@ -200,9 +160,9 @@
     </table>
   </div>
 
-  <!-- Procedimiento paso a paso -->
+  <!-- Procedimiento Detallado -->
   <div id="procedimiento" class="procedimiento" style="display:none;">
-    <h3>Procedimiento</h3>
+    <h3>Procedimiento Paso a Paso</h3>
     <ul id="listaProcedimiento"></ul>
   </div>
 
@@ -211,7 +171,7 @@
     function degToRad(grados) { return (grados * Math.PI) / 180; }
     function radToDeg(radianes) { return (radianes * 180) / Math.PI; }
 
-    // Funciones para fracciones: MCD y simplificación
+    // Funciones para trabajar con fracciones: MCD y simplificación
     function gcd(a, b) {
       if (b === 0) return a;
       return gcd(b, a % b);
@@ -228,10 +188,10 @@
     }
 
     function calcular() {
-      // Reiniciamos la lista de pasos
+      // Array para guardar los pasos detallados
       let pasos = [];
-      
-      // Obtener valores de inputs
+
+      // Obtener valores de los inputs
       const xIn = document.getElementById("input-x").value.trim();
       const yIn = document.getElementById("input-y").value.trim();
       const hIn = document.getElementById("input-h").value.trim();
@@ -243,7 +203,7 @@
       let h = parseFloat(hIn);
       let B = parseFloat(BIn); // Ángulo B (arriba izq)
       let A = parseFloat(AIn); // Ángulo A (abajo der)
-      
+
       let count = 0;
       if (!isNaN(x)) count++;
       if (!isNaN(y)) count++;
@@ -259,77 +219,81 @@
       procDiv.style.display = "none";
       document.getElementById("listaProcedimiento").innerHTML = "";
 
-      pasos.push(`<strong>Paso 1:</strong> Se recibieron los siguientes datos: x = ${xIn || "–"}, y = ${yIn || "–"}, h = ${hIn || "–"}, A = ${AIn || "–"}, B = ${BIn || "–"}.`);
+      pasos.push(`<strong>Paso 1:</strong> Se reciben los datos ingresados: x = ${xIn || "–"}, y = ${yIn || "–"}, h = ${hIn || "–"}, A = ${AIn || "–"}, B = ${BIn || "–"}.`);
 
       if (count < 2) {
         err.textContent = "Ingresa al menos 2 valores.";
         return;
       }
-      
-      // Si solo se ingresan los ángulos, asumimos x = 1
+
+      // Si solo se ingresan ángulos, asumimos x = 1
       if (isNaN(x) && isNaN(y) && isNaN(h) && !isNaN(A) && !isNaN(B)) {
         x = 1;
-        pasos.push("Solo se ingresaron ángulos, se asume x = 1 para continuar los cálculos.");
+        pasos.push("Como solo se ingresaron ángulos, se asume x = 1 para poder hallar el resto de los valores.");
       }
-      
-      // Si solo se ingresa A o B, se calcula el otro (recordando que A + B = 90°)
-      if (!isNaN(A) && isNaN(B)) { 
+
+      // Si solo se ingresa A o B, se calcula el otro (ya que A+B = 90°)
+      if (!isNaN(A) && isNaN(B)) {
         B = 90 - A;
-        pasos.push(`Se ingresó A = ${A}°, por lo que se calcula B = 90° - ${A}° = ${B}°.`);
+        pasos.push(`Como se ingresó A = ${A}°, se utiliza que A + B = 90°. Por lo tanto, B = 90° - ${A}° = ${B}°.`);
       }
-      if (!isNaN(B) && isNaN(A)) { 
+      if (!isNaN(B) && isNaN(A)) {
         A = 90 - B;
-        pasos.push(`Se ingresó B = ${B}°, por lo que se calcula A = 90° - ${B}° = ${A}°.`);
+        pasos.push(`Como se ingresó B = ${B}°, se utiliza que A + B = 90°. Por lo tanto, A = 90° - ${B}° = ${A}°.`);
       }
-      
-      // Si no se ingresaron ángulos pero se tienen catetos, calcular A = arctan(y/x) y B = 90 - A.
+
+      // Si no hay ángulos pero se tienen ambos catetos, se calcula A = arctan(y/x)
       if (isNaN(A) && !isNaN(x) && !isNaN(y)) {
         A = radToDeg(Math.atan2(y, x));
         B = 90 - A;
-        pasos.push(`Con x = ${x} y y = ${y} se calcula A = arctan(y/x) = ${A.toFixed(2)}° y B = 90° - ${A.toFixed(2)}° = ${B.toFixed(2)}°.`);
+        pasos.push(`Con catetos x = ${x} y y = ${y}, se aplica la función arctan: A = arctan(y/x) ≈ ${A.toFixed(2)}° y B = 90° - ${A.toFixed(2)}° ≈ ${B.toFixed(2)}°.`);
       }
-      
-      // Calcular lado faltante:
-      // Caso 1: si se tienen x e y, se calcula h = √(x²+y²)
+
+      // Calcular el lado faltante
+      // Caso 1: Con x e y conocidos, usar el teorema de Pitágoras: h = √(x² + y²)
       if (!isNaN(x) && !isNaN(y) && isNaN(h)) {
         h = Math.sqrt(x*x + y*y);
-        pasos.push(`Se tienen x = ${x} e y = ${y}, se calcula h = √(x²+y²) = √(${x*x}+${y*y}) = ${h.toFixed(2)}.`);
+        pasos.push(`Como se conocen los catetos x = ${x} e y = ${y}, se aplica el teorema de Pitágoras: h = √(x² + y²) = √(${x}² + ${y}²) = √(${(x*x).toFixed(2)} + ${(y*y).toFixed(2)}) ≈ ${h.toFixed(2)}.`);
       }
-      // Caso 2: si se tiene x y h, se calcula y = √(h²-x²)
+      // Caso 2: Con x y h, se calcula y = √(h² - x²)
       if (!isNaN(x) && isNaN(y) && !isNaN(h)) {
         if (h <= x) { err.textContent = "h debe ser mayor que x."; return; }
         y = Math.sqrt(h*h - x*x);
-        pasos.push(`Se tienen x = ${x} y h = ${h}, se calcula y = √(h²-x²) = √(${h*h}-${x*x}) = ${y.toFixed(2)}.`);
+        pasos.push(`Con x = ${x} y h = ${h}, se despeja y del teorema de Pitágoras: y = √(h² - x²) = √(${h}² - ${x}²) ≈ ${y.toFixed(2)}.`);
       }
-      // Caso 3: si se tiene y y h, se calcula x = √(h²-y²)
+      // Caso 3: Con y y h, se calcula x = √(h² - y²)
       if (isNaN(x) && !isNaN(y) && !isNaN(h)) {
         if (h <= y) { err.textContent = "h debe ser mayor que y."; return; }
         x = Math.sqrt(h*h - y*y);
-        pasos.push(`Se tienen y = ${y} y h = ${h}, se calcula x = √(h²-y²) = √(${h*h}-${y*y}) = ${x.toFixed(2)}.`);
+        pasos.push(`Con y = ${y} y h = ${h}, se despeja x: x = √(h² - y²) = √(${h}² - ${y}²) ≈ ${x.toFixed(2)}.`);
       }
-      // Caso 4: Si se tiene un cateto y un ángulo, se calcula el otro cateto y h
+      // Caso 4: Si se tiene un cateto y un ángulo, se puede calcular el otro cateto y h usando las funciones trigonométricas.
       if (!isNaN(A) && !isNaN(x) && isNaN(y) && isNaN(h)) {
+        // Usamos sen(A) = y/h o tan(A) = y/x
         y = x * Math.tan(degToRad(A));
         h = Math.sqrt(x*x + y*y);
-        pasos.push(`Con A = ${A}° y x = ${x}, se calcula y = x·tan(A) = ${x}·tan(${A}°) = ${y.toFixed(2)} y luego h = √(x²+y²) = ${h.toFixed(2)}.`);
+        pasos.push(`Con A = ${A}° y x = ${x}, se usa tan(A) = y/x. Se despeja y: y = x·tan(A) = ${x}·tan(${A}°) ≈ ${y.toFixed(2)}. Luego, h = √(x² + y²) ≈ ${h.toFixed(2)}.`);
       }
       if (!isNaN(A) && !isNaN(y) && isNaN(x) && isNaN(h)) {
+        // Usamos cos(A) = x/h o tan(A) = y/x
         x = y / Math.tan(degToRad(A));
         h = Math.sqrt(x*x + y*y);
-        pasos.push(`Con A = ${A}° y y = ${y}, se calcula x = y/tan(A) = ${y} / tan(${A}°) = ${x.toFixed(2)} y luego h = √(x²+y²) = ${h.toFixed(2)}.`);
+        pasos.push(`Con A = ${A}° y y = ${y}, se usa tan(A) = y/x. Se despeja x: x = y/tan(A) = ${y}/tan(${A}°) ≈ ${x.toFixed(2)}. Luego, h = √(x² + y²) ≈ ${h.toFixed(2)}.`);
       }
       if (!isNaN(B) && !isNaN(x) && isNaN(y) && isNaN(h)) {
+        // Usamos sen(B) = x/h o tan(B) = x/y
         y = x * Math.tan(degToRad(B));
         h = Math.sqrt(x*x + y*y);
-        pasos.push(`Con B = ${B}° y x = ${x}, se calcula y = x·tan(B) = ${x}·tan(${B}°) = ${y.toFixed(2)} y luego h = √(x²+y²) = ${h.toFixed(2)}.`);
+        pasos.push(`Con B = ${B}° y x = ${x}, se usa tan(B) = x/y. Se despeja y: y = x·tan(B) = ${x}·tan(${B}°) ≈ ${y.toFixed(2)}. Luego, h = √(x² + y²) ≈ ${h.toFixed(2)}.`);
       }
       if (!isNaN(B) && !isNaN(y) && isNaN(x) && isNaN(h)) {
+        // Usamos cos(B) = y/h o tan(B) = x/y
         x = y / Math.tan(degToRad(B));
         h = Math.sqrt(x*x + y*y);
-        pasos.push(`Con B = ${B}° y y = ${y}, se calcula x = y/tan(B) = ${y} / tan(${B}°) = ${x.toFixed(2)} y luego h = √(x²+y²) = ${h.toFixed(2)}.`);
+        pasos.push(`Con B = ${B}° y y = ${y}, se usa tan(B) = x/y. Se despeja x: x = y/tan(B) = ${y}/tan(${B}°) ≈ ${x.toFixed(2)}. Luego, h = √(x² + y²) ≈ ${h.toFixed(2)}.`);
       }
       
-      // Validaciones
+      // Validaciones finales
       if (!isNaN(x) && !isNaN(h) && h <= x) { err.textContent = "h debe ser mayor que x."; return; }
       if (!isNaN(y) && !isNaN(h) && h <= y) { err.textContent = "h debe ser mayor que y."; return; }
       
@@ -341,18 +305,18 @@
       let BI = Math.round(B);
       pasos.push(`Los valores redondeados son: x = ${xI}, y = ${yI}, h = ${hI}, A = ${AI}°, B = ${BI}°.`);
       
-      // Mostrar lados y ángulos
+      // Actualizar la sección de resultados
       document.getElementById("resX").textContent = xI;
       document.getElementById("resY").textContent = yI;
       document.getElementById("resH").textContent = hI;
       document.getElementById("resA").textContent = AI;
       document.getElementById("resB").textContent = BI;
       
-      // Funciones trigonométricas según la orientación:
+      // Cálculo de funciones trigonométricas con los enteros redondeados
       // Para ángulo A:
-      //    sen(A)=y/h, cos(A)=x/h, tan(A)=y/x, csc(A)=h/y, sec(A)=h/x, cot(A)=x/y
+      //    sen(A)= y/h, cos(A)= x/h, tan(A)= y/x, csc(A)= h/y, sec(A)= h/x, cot(A)= x/y
       // Para ángulo B:
-      //    sen(B)=x/h, cos(B)=y/h, tan(B)=x/y, csc(B)=h/x, sec(B)=h/y, cot(B)=y/x
+      //    sen(B)= x/h, cos(B)= y/h, tan(B)= x/y, csc(B)= h/x, sec(B)= h/y, cot(B)= y/x
       let senA = simplifyFraction(yI, hI);
       let cosA = simplifyFraction(xI, hI);
       let tanA = simplifyFraction(yI, xI);
@@ -367,7 +331,7 @@
       let secB = simplifyFraction(hI, yI);
       let cotB = simplifyFraction(yI, xI);
       
-      // Actualizar la tabla de funciones trigonométricas (solo se muestran las fracciones con los números)
+      // Actualizar la tabla de funciones trigonométricas (solo se muestran las fracciones)
       document.getElementById("senA").textContent = senA;
       document.getElementById("cosA").textContent = cosA;
       document.getElementById("tanA").textContent = tanA;
@@ -382,10 +346,9 @@
       document.getElementById("secB").textContent = secB;
       document.getElementById("cotB").textContent = cotB;
       
-      // Mostrar los resultados y el procedimiento
+      // Inyectar el procedimiento detallado
       resDiv.style.display = "block";
       procDiv.style.display = "block";
-      // Inyectar los pasos en la lista del procedimiento
       const lista = document.getElementById("listaProcedimiento");
       pasos.forEach(p => {
         let li = document.createElement("li");
