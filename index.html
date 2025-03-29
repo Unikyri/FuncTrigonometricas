@@ -143,32 +143,70 @@
       <thead>
         <tr>
           <th></th>
-          <th>sen</th>
-          <th>cos</th>
-          <th>tan</th>
-          <th>csc</th>
-          <th>sec</th>
-          <th>cot</th>
+          <th>Valor</th>
+          <th>Fracción</th>
         </tr>
       </thead>
       <tbody>
         <tr>
-          <th>Ángulo A</th>
+          <th>sen A</th>
           <td id="senA"></td>
-          <td id="cosA"></td>
-          <td id="tanA"></td>
-          <td id="cscA"></td>
-          <td id="secA"></td>
-          <td id="cotA"></td>
+          <td id="fSenA"></td>
         </tr>
         <tr>
-          <th>Ángulo C</th>
+          <th>cos A</th>
+          <td id="cosA"></td>
+          <td id="fCosA"></td>
+        </tr>
+        <tr>
+          <th>tan A</th>
+          <td id="tanA"></td>
+          <td id="fTanA"></td>
+        </tr>
+        <tr>
+          <th>csc A</th>
+          <td id="cscA"></td>
+          <td id="fCscA"></td>
+        </tr>
+        <tr>
+          <th>sec A</th>
+          <td id="secA"></td>
+          <td id="fSecA"></td>
+        </tr>
+        <tr>
+          <th>cot A</th>
+          <td id="cotA"></td>
+          <td id="fCotA"></td>
+        </tr>
+        <tr>
+          <th>sen C</th>
           <td id="senB"></td>
+          <td id="fSenB"></td>
+        </tr>
+        <tr>
+          <th>cos C</th>
           <td id="cosB"></td>
+          <td id="fCosB"></td>
+        </tr>
+        <tr>
+          <th>tan C</th>
           <td id="tanB"></td>
+          <td id="fTanB"></td>
+        </tr>
+        <tr>
+          <th>csc C</th>
           <td id="cscB"></td>
+          <td id="fCscB"></td>
+        </tr>
+        <tr>
+          <th>sec C</th>
           <td id="secB"></td>
+          <td id="fSecB"></td>
+        </tr>
+        <tr>
+          <th>cot C</th>
           <td id="cotB"></td>
+          <td id="fCotB"></td>
         </tr>
       </tbody>
     </table>
@@ -179,8 +217,7 @@
     function degToRad(grados) { return (grados * Math.PI) / 180; }
     function radToDeg(radianes) { return (radianes * 180) / Math.PI; }
 
-    // Función para simplificar la expresión radical de un entero n
-    // Ejemplo: 12 -> "2√3" (porque 12=4*3)
+    // Función para simplificar una raíz entera (ej.: 12 -> "2√3")
     function simplifyRadical(n) {
       n = Math.round(n);
       const raiz = Math.floor(Math.sqrt(n));
@@ -195,9 +232,34 @@
       return `√${n}`;
     }
 
+    // Función para aproximar un decimal a fracción usando mediantes
+    function decimalToFraction(decimal, tolerance = 1e-6) {
+      if (Math.abs(decimal - Math.round(decimal)) < tolerance) {
+        return Math.round(decimal).toString();
+      }
+      let sign = decimal < 0 ? -1 : 1;
+      decimal = Math.abs(decimal);
+      let lower_n = 0, lower_d = 1;
+      let upper_n = 1, upper_d = 0;
+      while (true) {
+        const mediant_n = lower_n + upper_n;
+        const mediant_d = lower_d + upper_d;
+        const mediant = mediant_n / mediant_d;
+        if (Math.abs(decimal - mediant) < tolerance) {
+          return (sign * mediant_n) + "/" + mediant_d;
+        } else if (mediant < decimal) {
+          lower_n = mediant_n;
+          lower_d = mediant_d;
+        } else {
+          upper_n = mediant_n;
+          upper_d = mediant_d;
+        }
+      }
+    }
+
     // Función principal de cálculo
     function calcular() {
-      // Obtiene los valores de los inputs (si un campo está vacío, se convierte en NaN)
+      // Obtiene los valores de los inputs (los vacíos se convierten en NaN)
       let x = parseFloat(document.getElementById("input-x").value.trim());
       let y = parseFloat(document.getElementById("input-y").value.trim());
       let h = parseFloat(document.getElementById("input-h").value.trim());
@@ -227,7 +289,7 @@
         x = 1;
       }
 
-      // Si se ingresó solo un ángulo, se calcula el otro (recordar que en un triángulo rectángulo la suma de los ángulos agudos es 90°)
+      // Si se ingresó solo un ángulo, se calcula el otro (en un triángulo rectángulo, A+B=90°)
       if (!isNaN(A) && isNaN(B)) { B = 90 - A; }
       if (!isNaN(B) && isNaN(A)) { A = 90 - B; }
 
@@ -270,36 +332,33 @@
         h = Math.sqrt(x*x + y*y);
       }
 
-      // Verificamos que los datos sean consistentes (por ejemplo, que h sea mayor que cada cateto)
+      // Verificar consistencia: h debe ser mayor que cada cateto
       if (!isNaN(x) && !isNaN(h) && h <= x) { mensajeError.textContent = "h debe ser mayor que x."; return; }
       if (!isNaN(y) && !isNaN(h) && h <= y) { mensajeError.textContent = "h debe ser mayor que y."; return; }
 
-      // Redondeamos los resultados a enteros
+      // Redondeamos los resultados a enteros para los lados y ángulos
       let xInt = Math.round(x);
       let yInt = Math.round(y);
       let hInt = Math.round(h);
       let AInt = Math.round(A);
       let BInt = Math.round(B);
 
-      // Preparamos las expresiones simbólicas cuando se usó la raíz cuadrada en el cálculo
+      // Preparamos las expresiones simbólicas para los lados (raíces)
       let simbH = "", simbX = "", simbY = "";
-      // Si h no fue ingresada, se calculó como √(x²+y²)
       if (isNaN(document.getElementById("input-h").value.trim()) && !isNaN(x) && !isNaN(y)) {
         let inside = Math.round(x*x + y*y);
         simbH = `= √(${xInt}²+${yInt}²) → ${simplifyRadical(inside)}`;
       }
-      // Si x no fue ingresado, se calculó como √(h² - y²)
       if (isNaN(document.getElementById("input-x").value.trim()) && !isNaN(h) && !isNaN(y)) {
         let inside = Math.round(h*h - y*y);
         simbX = `= √(${hInt}²-${yInt}²) → ${simplifyRadical(inside)}`;
       }
-      // Si y no fue ingresado, se calculó como √(h² - x²)
       if (isNaN(document.getElementById("input-y").value.trim()) && !isNaN(h) && !isNaN(x)) {
         let inside = Math.round(h*h - x*x);
         simbY = `= √(${hInt}²-${xInt}²) → ${simplifyRadical(inside)}`;
       }
 
-      // Calculamos funciones trigonométricas para A y B (usamos los ángulos redondeados)
+      // Calculamos las funciones trigonométricas (con los ángulos redondeados)
       let A_rad = degToRad(AInt);
       let B_rad = degToRad(BInt);
       let sinA = Math.sin(A_rad), cosA = Math.cos(A_rad), tanA = Math.tan(A_rad);
@@ -307,7 +366,7 @@
       let cscA = 1/sinA, secA = 1/cosA, cotA = 1/tanA;
       let cscB = 1/sinB, secB = 1/cosB, cotB = 1/tanB;
 
-      // Mostrar resultados
+      // Mostrar resultados numéricos y simbólicos
       document.getElementById("resX").textContent = xInt;
       document.getElementById("resY").textContent = yInt;
       document.getElementById("resH").textContent = hInt;
@@ -318,19 +377,26 @@
       document.getElementById("simY").textContent = simbY;
       document.getElementById("simH").textContent = simbH;
 
-      document.getElementById("senA").textContent = Math.round(sinA*100)/100;
-      document.getElementById("cosA").textContent = Math.round(cosA*100)/100;
-      document.getElementById("tanA").textContent = Math.round(tanA*100)/100;
-      document.getElementById("cscA").textContent = Math.round(cscA*100)/100;
-      document.getElementById("secA").textContent = Math.round(secA*100)/100;
-      document.getElementById("cotA").textContent = Math.round(cotA*100)/100;
+      // Función para actualizar cada celda con valor decimal y su aproximación en fracción
+      function setTrigResult(idVal, idFrac, value) {
+        let valor = Math.round(value*100)/100;
+        document.getElementById(idVal).textContent = valor;
+        document.getElementById(idFrac).textContent = decimalToFraction(value, 1e-6);
+      }
 
-      document.getElementById("senB").textContent = Math.round(sinB*100)/100;
-      document.getElementById("cosB").textContent = Math.round(cosB*100)/100;
-      document.getElementById("tanB").textContent = Math.round(tanB*100)/100;
-      document.getElementById("cscB").textContent = Math.round(cscB*100)/100;
-      document.getElementById("secB").textContent = Math.round(secB*100)/100;
-      document.getElementById("cotB").textContent = Math.round(cotB*100)/100;
+      setTrigResult("senA", "fSenA", sinA);
+      setTrigResult("cosA", "fCosA", cosA);
+      setTrigResult("tanA", "fTanA", tanA);
+      setTrigResult("cscA", "fCscA", cscA);
+      setTrigResult("secA", "fSecA", secA);
+      setTrigResult("cotA", "fCotA", cotA);
+
+      setTrigResult("senB", "fSenB", sinB);
+      setTrigResult("cosB", "fCosB", cosB);
+      setTrigResult("tanB", "fTanB", tanB);
+      setTrigResult("cscB", "fCscB", cscB);
+      setTrigResult("secB", "fSecB", secB);
+      setTrigResult("cotB", "fCotB", cotB);
 
       resultadosDiv.style.display = "block";
     }
