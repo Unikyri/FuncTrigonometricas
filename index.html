@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Calculadora de Triángulo Rectángulo</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0; 
+      padding: 0;
+      background: #f2f2f2;
+    }
+
+    header {
+      background: #3f51b5;
+      color: white;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    main {
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 1rem;
+      background: #fff;
+      border-radius: 5px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    h1, h2 {
+      text-align: center;
+    }
+
+    .contenedor-form {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      margin: 1rem 0;
+    }
+
+    .campo {
+      display: flex;
+      flex-direction: column;
+      width: 120px;
+    }
+
+    .campo label {
+      font-weight: bold;
+      margin-bottom: 0.5rem;
+    }
+
+    .campo input {
+      padding: 0.5rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    button {
+      background: #3f51b5;
+      color: white;
+      border: none;
+      padding: 0.8rem 1.2rem;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    button:hover {
+      background: #303f9f;
+    }
+
+    .resultado {
+      margin-top: 2rem;
+      border-top: 1px solid #ccc;
+      padding-top: 1rem;
+    }
+
+    .resultado h3 {
+      margin-bottom: 0.5rem;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 1rem;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.75rem;
+      text-align: center;
+    }
+
+    th {
+      background: #eee;
+    }
+
+    .mensaje-error {
+      color: red;
+      text-align: center;
+      margin-top: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Calculadora de Triángulo Rectángulo</h1>
+  </header>
+
+  <main>
+    <h2>Ingresa al menos dos valores</h2>
+    <div class="contenedor-form">
+      <!-- Campos para lados -->
+      <div class="campo">
+        <label for="x">Cateto Ady. (x)</label>
+        <input type="number" step="any" id="x" placeholder="Ej: 3" />
+      </div>
+      <div class="campo">
+        <label for="y">Cateto Op. (y)</label>
+        <input type="number" step="any" id="y" placeholder="Ej: 4" />
+      </div>
+      <div class="campo">
+        <label for="h">Hipotenusa (h)</label>
+        <input type="number" step="any" id="h" placeholder="Ej: 5" />
+      </div>
+
+      <!-- Campos para ángulos -->
+      <div class="campo">
+        <label for="A">Ángulo A (°)</label>
+        <input type="number" step="any" id="A" placeholder="Ej: 30" />
+      </div>
+      <div class="campo">
+        <label for="B">Ángulo B (°)</label>
+        <input type="number" step="any" id="B" placeholder="Ej: 60" />
+      </div>
+    </div>
+
+    <div style="text-align:center;">
+      <button onclick="calcularTriangulo()">Calcular</button>
+    </div>
+
+    <div id="mensaje-error" class="mensaje-error"></div>
+
+    <div class="resultado" id="resultado" style="display:none;">
+      <h3>Resultados</h3>
+      <p><strong>Cateto Adyacente (x):</strong> <span id="resX"></span></p>
+      <p><strong>Cateto Opuesto (y):</strong> <span id="resY"></span></p>
+      <p><strong>Hipotenusa (h):</strong> <span id="resH"></span></p>
+      <p><strong>Ángulo A (°):</strong> <span id="resA"></span></p>
+      <p><strong>Ángulo B (°):</strong> <span id="resB"></span></p>
+
+      <h3>Funciones trigonométricas</h3>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>sen</th>
+            <th>cos</th>
+            <th>tan</th>
+            <th>csc</th>
+            <th>sec</th>
+            <th>cot</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <th>Ángulo A</th>
+            <td id="senA"></td>
+            <td id="cosA"></td>
+            <td id="tanA"></td>
+            <td id="cscA"></td>
+            <td id="secA"></td>
+            <td id="cotA"></td>
+          </tr>
+          <tr>
+            <th>Ángulo B</th>
+            <td id="senB"></td>
+            <td id="cosB"></td>
+            <td id="tanB"></td>
+            <td id="cscB"></td>
+            <td id="secB"></td>
+            <td id="cotB"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    // Función para convertir grados a radianes
+    function degToRad(grados) {
+      return (grados * Math.PI) / 180;
+    }
+
+    // Función para convertir radianes a grados
+    function radToDeg(radianes) {
+      return (radianes * 180) / Math.PI;
+    }
+
+    function calcularTriangulo() {
+      // Obtener valores de los inputs
+      const xInput = document.getElementById('x').value.trim();
+      const yInput = document.getElementById('y').value.trim();
+      const hInput = document.getElementById('h').value.trim();
+      const AInput = document.getElementById('A').value.trim();
+      const BInput = document.getElementById('B').value.trim();
+
+      // Convertir a números (si están vacíos, se quedarán como NaN)
+      let x = parseFloat(xInput);
+      let y = parseFloat(yInput);
+      let h = parseFloat(hInput);
+      let A = parseFloat(AInput);
+      let B = parseFloat(BInput);
+
+      // Contar cuántos valores válidos tenemos
+      let valoresIngresados = 0;
+      if (!isNaN(x)) valoresIngresados++;
+      if (!isNaN(y)) valoresIngresados++;
+      if (!isNaN(h)) valoresIngresados++;
+      if (!isNaN(A)) valoresIngresados++;
+      if (!isNaN(B)) valoresIngresados++;
+
+      const mensajeError = document.getElementById('mensaje-error');
+      const divResultado = document.getElementById('resultado');
+
+      // Limpiar mensaje de error y resultado
+      mensajeError.textContent = '';
+      divResultado.style.display = 'none';
+
+      // Necesitamos al menos 2 valores
+      if (valoresIngresados < 2) {
+        mensajeError.textContent = 'Debes ingresar al menos 2 valores para calcular.';
+        return;
+      }
+
+      // Aquí empieza la lógica de cálculo
+
+      // 1) Si solo tenemos ángulos, asumimos un cateto adyacente = 1 (o cualquier escala)
+      if (isNaN(x) && isNaN(y) && isNaN(h) && !isNaN(A) && !isNaN(B)) {
+        // Verificamos que A + B = 90 (o muy cerca)
+        if (Math.abs(A + B - 90) > 0.0001) {
+          mensajeError.textContent = 'Los ángulos A y B deben sumar 90° en un triángulo rectángulo.';
+          return;
+        }
+        // Asumimos x = 1 => y = tan(A), h = sqrt(1 + tan^2(A))
+        let A_rad = degToRad(A);
+        x = 1;
+        y = Math.tan(A_rad);
+        h = Math.sqrt(x * x + y * y);
+      }
+
+      // Intentamos detectar y resolver los casos:
+
+      // Caso: tenemos x e y => calculamos h y ángulos
+      if (!isNaN(x) && !isNaN(y) && isNaN(h)) {
+        h = Math.sqrt(x * x + y * y);
+      }
+
+      // Caso: tenemos x e h => calculamos y y ángulos
+      if (!isNaN(x) && isNaN(y) && !isNaN(h)) {
+        if (h <= x) {
+          mensajeError.textContent = 'La hipotenusa (h) debe ser mayor que el cateto (x).';
+          return;
+        }
+        y = Math.sqrt(h * h - x * x);
+      }
+
+      // Caso: tenemos y e h => calculamos x y ángulos
+      if (isNaN(x) && !isNaN(y) && !isNaN(h)) {
+        if (h <= y) {
+          mensajeError.textContent = 'La hipotenusa (h) debe ser mayor que el cateto (y).';
+          return;
+        }
+        x = Math.sqrt(h * h - y * y);
+      }
+
+      // Caso: tenemos A e h => calculamos x, y
+      if (!isNaN(A) && !isNaN(h) && isNaN(x) && isNaN(y)) {
+        let A_rad = degToRad(A);
+        x = h * Math.cos(A_rad);
+        y = h * Math.sin(A_rad);
+      }
+
+      // Caso: tenemos B e h => calculamos x, y
+      if (!isNaN(B) && !isNaN(h) && isNaN(x) && isNaN(y)) {
+        let B_rad = degToRad(B);
+        x = h * Math.cos(B_rad);
+        y = h * Math.sin(B_rad);
+      }
+
+      // Caso: tenemos A e x => calculamos y, h
+      if (!isNaN(A) && !isNaN(x) && isNaN(y) && isNaN(h)) {
+        let A_rad = degToRad(A);
+        y = x * Math.tan(A_rad);
+        h = Math.sqrt(x * x + y * y);
+      }
+
+      // Caso: tenemos A e y => calculamos x, h
+      if (!isNaN(A) && !isNaN(y) && isNaN(x) && isNaN(h)) {
+        let A_rad = degToRad(A);
+        x = y / Math.tan(A_rad);
+        h = Math.sqrt(x * x + y * y);
+      }
+
+      // Caso: tenemos B e x => calculamos y, h
+      if (!isNaN(B) && !isNaN(x) && isNaN(y) && isNaN(h)) {
+        let B_rad = degToRad(B);
+        y = x * Math.tan(B_rad);
+        h = Math.sqrt(x * x + y * y);
+      }
+
+      // Caso: tenemos B e y => calculamos x, h
+      if (!isNaN(B) && !isNaN(y) && isNaN(x) && isNaN(h)) {
+        let B_rad = degToRad(B);
+        x = y / Math.tan(B_rad);
+        h = Math.sqrt(x * x + y * y);
+      }
+
+      // Ahora calculamos los ángulos si faltan
+      if (isNaN(A) && !isNaN(x) && !isNaN(y)) {
+        // A = arctan(y/x)
+        A = radToDeg(Math.atan2(y, x));
+      }
+      if (isNaN(B) && !isNaN(A)) {
+        B = 90 - A;
+      }
+      if (isNaN(A) && !isNaN(B)) {
+        A = 90 - B;
+      }
+
+      // Verificamos consistencia: A + B ~ 90
+      if (Math.abs(A + B - 90) > 0.5) {
+        // Se deja un margen de error de 0.5 grados por redondeos
+        mensajeError.textContent = 'Los valores ingresados no son consistentes (A + B no es 90).';
+        return;
+      }
+
+      // Si aún no tenemos x, y, h, no se puede hacer más
+      if (isNaN(x) || isNaN(y) || isNaN(h) || isNaN(A) || isNaN(B)) {
+        mensajeError.textContent = 'No fue posible calcular con los datos proporcionados.';
+        return;
+      }
+
+      // Asegurarnos de que todo sea positivo
+      if (x <= 0 || y <= 0 || h <= 0) {
+        mensajeError.textContent = 'Los lados calculados deben ser positivos. Revisa tus valores.';
+        return;
+      }
+
+      // Redondeamos un poco para mostrar (opcional)
+      const decimales = 6;
+      x = parseFloat(x.toFixed(decimales));
+      y = parseFloat(y.toFixed(decimales));
+      h = parseFloat(h.toFixed(decimales));
+      A = parseFloat(A.toFixed(decimales));
+      B = parseFloat((90 - A).toFixed(decimales)); // forzamos B = 90 - A
+
+      // Cálculo de las funciones trigonométricas
+      // Ángulo A en radianes
+      let A_rad = degToRad(A);
+      let sinA = Math.sin(A_rad);
+      let cosA = Math.cos(A_rad);
+      let tanA = Math.tan(A_rad);
+      let cscA = 1 / sinA;
+      let secA = 1 / cosA;
+      let cotA = 1 / tanA;
+
+      // Ángulo B en radianes
+      let B_rad = degToRad(B);
+      let sinB = Math.sin(B_rad);
+      let cosB = Math.cos(B_rad);
+      let tanB = Math.tan(B_rad);
+      let cscB = 1 / sinB;
+      let secB = 1 / cosB;
+      let cotB = 1 / tanB;
+
+      // Mostrar resultados
+      document.getElementById('resX').textContent = x;
+      document.getElementById('resY').textContent = y;
+      document.getElementById('resH').textContent = h;
+      document.getElementById('resA').textContent = A;
+      document.getElementById('resB').textContent = B;
+
+      document.getElementById('senA').textContent = sinA.toFixed(decimales);
+      document.getElementById('cosA').textContent = cosA.toFixed(decimales);
+      document.getElementById('tanA').textContent = tanA.toFixed(decimales);
+      document.getElementById('cscA').textContent = cscA.toFixed(decimales);
+      document.getElementById('secA').textContent = secA.toFixed(decimales);
+      document.getElementById('cotA').textContent = cotA.toFixed(decimales);
+
+      document.getElementById('senB').textContent = sinB.toFixed(decimales);
+      document.getElementById('cosB').textContent = cosB.toFixed(decimales);
+      document.getElementById('tanB').textContent = tanB.toFixed(decimales);
+      document.getElementById('cscB').textContent = cscB.toFixed(decimales);
+      document.getElementById('secB').textContent = secB.toFixed(decimales);
+      document.getElementById('cotB').textContent = cotB.toFixed(decimales);
+
+      // Finalmente mostramos el bloque de resultados
+      divResultado.style.display = 'block';
+    }
+  </script>
+</body>
+</html>
